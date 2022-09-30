@@ -1,0 +1,30 @@
+{
+  "name": "typesafe-mongo",
+  "version": "0.0.0",
+  "description": "Typesafe utility using with official MongoDB Node.js driver",
+  "repository": "https://github.com/vilic/typesafe-mongo.git",
+  "license": "MIT",
+  "author": "vilicvane",
+  "exports": {
+    "types": "./bld/library/index.d.ts",
+    "require": "./bld/library/index.js"
+  },
+  "scripts": {
+    "build": "rimraf ./bld && tsc --build",
+    "lint": "run-in-every eslint-project --parallel --echo -- eslint --config {configFileName} --no-error-on-unmatched-pattern .",
+    "lint-prettier": "prettier --check .",
+    "test": "yarn lint-prettier && yarn build && yarn lint"
+  },
+  "dependencies": {
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@mufan/code": "^0.2.15",
+    "@mufan/eslint-plugin": "^0.1.75",
+    "eslint": "^8.24.0",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "run-in-every": "^0.2.0",
+    "typescript": "^4.8.4"
+  }
+}
