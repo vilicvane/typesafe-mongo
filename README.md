@@ -1,4 +1,4 @@
-# typesafe-mongo
+# TypeSafe Mongo
 
 Just another awesome magic.
 
