@@ -1,4 +1,8 @@
+export const atomicSymbol = Symbol('atomic');
+
 export class Atomic<T> {
+  private [atomicSymbol] = true;
+
   constructor(readonly value: T) {}
 }
 

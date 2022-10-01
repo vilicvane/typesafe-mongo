@@ -42,12 +42,25 @@ interface B {
 flattenFilter<B>({texts: {$eq: 'abc'}});
 flattenFilter<B>({texts: 'abc'});
 flattenFilter<B>({objects: {$elemMatch: {bar: 123}}});
-// @ts-expect-error
 flattenFilter<B>({objects: {$elemMatch: {pia: {x: 'abc', y: 'def'}}}});
 flattenFilter<B>({
   objects: {
     $elemMatch: flattenFilter<B['objects'][number]>({
       pia: {x: 'abc', y: 'def'},
     }),
+  },
+});
+flattenFilter<B>({
+  objects: {
+    $elemMatch: {
+      pia: {x: 'abc', y: 'def'},
+    },
+  },
+});
+flattenFilter<B>({
+  objects: {
+    0: {
+      bar: 123,
+    },
   },
 });

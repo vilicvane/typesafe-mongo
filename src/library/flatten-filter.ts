@@ -7,8 +7,8 @@ import type {
   Document,
   Filter,
 } from 'mongodb';
-import {Binary, ObjectId} from 'mongodb';
 
+import type {AtomicType, LeafType} from './@mongo';
 import {Atomic} from './atomic';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -42,32 +42,13 @@ export function flattenFilter(source: object): object {
       continue;
     }
 
-    switch (typeof value) {
-      case 'string':
-      case 'number':
-      case 'boolean':
-        filter[key] = value;
-        continue;
-    }
-
-    if (
-      value === null ||
-      Array.isArray(value) ||
-      value instanceof Date ||
-      value instanceof RegExp ||
-      value instanceof ObjectId ||
-      value instanceof Binary
-    ) {
-      filter[key] = value;
-      continue;
-    }
-
     if (value instanceof Atomic) {
       filter[key] = value.value;
       continue;
     }
 
     if (!_.isPlainObject(value)) {
+      filter[key] = value;
       continue;
     }
 
@@ -89,47 +70,54 @@ export function flattenFilter(source: object): object {
   return filter;
 }
 
-type LeafType = string | number | boolean | Date | RegExp | ObjectId | Binary;
+type _FilterSource<T> =
+  | {
+      [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
+        ? _FilterSourceValue<T>
+        : never;
+    }
+  | (T extends readonly (infer TElement)[]
+      ? {
+          [TIndex in `${number}`]?: _FilterSourceValue<TElement>;
+        }
+      : never);
 
-type _FilterSource<T> = {
-  [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
-    ?
-        | null
-        | _FilterSourceValue<T, false>
-        | (T extends (infer T)[]
-            ? _FilterSourceValue<NonNullable<T>, true>
-            : never)
-    : never;
-};
+type _FilterSourceValue<T> =
+  | null
+  | _FilterSourceElementValue<T, false>
+  | (T extends readonly (infer TElement)[]
+      ? _FilterSourceElementValue<TElement, true>
+      : never);
 
-type _FilterSourceValue<T, TBeingElement> =
-  | Atomic<T>
-  | (T extends LeafType ? T : T extends object ? _FilterSource<T> : never)
-  | _FilterOperators<T, TBeingElement>;
+type _FilterSourceElementValue<T, TBeingElement> =
+  | (T extends AtomicType ? T : Atomic<T>)
+  | (T extends LeafType ? never : T extends object ? _FilterSource<T> : never)
+  | FilterOperators<T, TBeingElement>;
 
-type _ElementMatchFilter<T> = {
+export type ElementMatchFilter<T> = {
   [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
     ?
         | null
         | _ElementMatchFilterValue<T, false>
-        | (T extends (infer T)[]
-            ? _ElementMatchFilterValue<NonNullable<T>, true>
+        | (T extends readonly (infer TElement)[]
+            ? _ElementMatchFilterValue<TElement, true>
             : never)
     : never;
 };
 
 type _ElementMatchFilterValue<T, TBeingElement> =
-  | (T extends LeafType ? T : never)
-  | _FilterOperators<T, TBeingElement>;
+  | T
+  | FilterOperators<T, TBeingElement>;
 
-type _FilterOperators<T, TBeingElement> = FilterOperators<T> &
-  (TBeingElement extends true
-    ? {
-        $elemMatch?: FlattenedFilter<T> | _ElementMatchFilter<T>;
-      }
-    : {});
+export type FilterOperators<T, TBeingElement> =
+  FilterOperatorsWithoutElementMatch<T> &
+    (TBeingElement extends true
+      ? {
+          $elemMatch?: FlattenedFilter<T> | ElementMatchFilter<T>;
+        }
+      : {});
 
-export declare interface FilterOperators<T> {
+export interface FilterOperatorsWithoutElementMatch<T> {
   $eq?: T;
   $gt?: T;
   $gte?: T;
@@ -138,7 +126,9 @@ export declare interface FilterOperators<T> {
   $lte?: T;
   $ne?: T;
   $nin?: readonly T[];
-  $not?: T extends string ? FilterOperators<T> | RegExp : FilterOperators<T>;
+  $not?: T extends string
+    ? FilterOperatorsWithoutElementMatch<T> | RegExp
+    : FilterOperatorsWithoutElementMatch<T>;
   /**
    * When `true`, `$exists` matches the documents that contain the field,
    * including documents where the field value is null.
