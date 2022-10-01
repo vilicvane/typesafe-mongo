@@ -2,7 +2,7 @@
   "extends": "@mufan/code-boilerplates/typescript",
   "options": {
     "name": "typesafe-mongo",
-    "description": "TypeSafe utilities for official MongoDB Node.js driver",
+    "description": "TypeSafe utilities for official MongoDB Node.js driver.",
     "repository": "https://github.com/vilic/typesafe-mongo.git",
     "license": "MIT",
     "author": "vilicvane",
