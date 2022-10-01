@@ -134,7 +134,7 @@ type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
     : TUpdateOptionsMode extends 'element-match'
     ? T extends readonly (infer TElement)[]
       ?
-          | (TElement extends AtomicType ? T : Atomic<T>)
+          | (TElement extends AtomicType ? TElement : Atomic<TElement>)
           | FilterOperators<TElement, false>
       : never
     : never;

@@ -83,6 +83,9 @@ flattenUpdate<A>({
         },
       },
     },
+    objects: atomic({
+      bar: 'abc',
+    }),
   },
   $push: {
     objects: atomic({
