@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import type {IntegerType, NumericType, Timestamp, UpdateFilter} from 'mongodb';
 
+import type {_FilterOperators} from './@filter';
+import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
-import {Atomic} from './atomic';
-import type {FilterOperators} from './flatten-filter';
+import {isOperatorObject} from './@utils';
+import type {Atomic} from './atomic';
 
 export function flattenUpdate<T extends object>(
   source: UpdateSource<T>,
@@ -14,53 +16,17 @@ export function flattenUpdate(source: object): object {
   for (const [key, value] of Object.entries(source)) {
     switch (key) {
       case '$currentDate':
-        update[key] = _flattenUpdateOperation(value, isCurrentDateOptions);
+        update[key] = flattenObject(value, isCurrentDateOptionsObject);
         break;
       case '$pull':
-        update[key] = _flattenUpdateOperation(value, isPullOptions);
+        update[key] = flattenObject(value, isOperatorObject);
         break;
       case '$bit':
-        update[key] = _flattenUpdateOperation(value, isBitOptions);
+        update[key] = flattenObject(value, isBitOptionsObject);
         break;
       default:
-        update[key] = _flattenUpdateOperation(value, isNeverOptions);
+        update[key] = flattenObject(value, isNeverOptionsObject);
         break;
-    }
-  }
-
-  return update;
-}
-
-export function _flattenUpdateOperation(
-  source: object,
-  optionsObjectTester: (value: object) => boolean,
-): object {
-  const update: Record<string, unknown> = {};
-
-  for (const [key, value] of Object.entries(source)) {
-    if (value === undefined) {
-      continue;
-    }
-
-    if (value instanceof Atomic) {
-      update[key] = value.value;
-      continue;
-    }
-
-    if (!_.isPlainObject(value)) {
-      update[key] = value;
-      continue;
-    }
-
-    if (optionsObjectTester(value)) {
-      update[key] = value;
-      continue;
-    }
-
-    const subUpdate = _flattenUpdateOperation(value, optionsObjectTester);
-
-    for (const [subKey, subValue] of Object.entries(subUpdate)) {
-      update[`${key}.${subKey}`] = subValue;
     }
   }
 
@@ -135,11 +101,11 @@ type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
     ? T extends readonly (infer TElement)[]
       ?
           | (TElement extends AtomicType ? TElement : Atomic<Partial<TElement>>)
-          | FilterOperators<TElement, false>
+          | _FilterOperators<TElement, false>
       : never
     : never;
 
-function isCurrentDateOptions(object: object): boolean {
+function isCurrentDateOptionsObject(object: object): boolean {
   return testOnlyKeyValue(
     object,
     key => key === '$type',
@@ -155,7 +121,7 @@ function isCurrentDateOptions(object: object): boolean {
   );
 }
 
-function isBitOptions(object: object): boolean {
+function isBitOptionsObject(object: object): boolean {
   return testOnlyKeyValue(
     object,
     key => {
@@ -172,13 +138,7 @@ function isBitOptions(object: object): boolean {
   );
 }
 
-function isPullOptions(object: object): boolean {
-  const keys = Object.keys(object);
-
-  return keys.every(key => key.startsWith('$'));
-}
-
-function isNeverOptions(_object: object): boolean {
+function isNeverOptionsObject(_object: object): boolean {
   return false;
 }
 
