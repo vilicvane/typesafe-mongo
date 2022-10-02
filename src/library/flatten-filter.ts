@@ -6,9 +6,9 @@ import type {Atomic} from './atomic';
 
 export type FilterSource<T extends object> = _FilterSource<T>;
 
-export function flattenFilter<T>(
+export function flattenFilter<T extends object>(
   source: T extends object ? FilterSource<T> : never,
-): T extends object ? _FlattenedFilter<T> : never;
+): _FlattenedFilter<T>;
 export function flattenFilter(source: object): object {
   return flattenObject(source, isOperatorObject);
 }
