@@ -12,6 +12,7 @@ interface A {
   foo: number;
   objects: {
     bar: string;
+    pia: number;
   }[];
 }
 
@@ -44,7 +45,12 @@ flattenUpdate<A>({
   },
   $set: {
     foo: 123,
-    objects: [{bar: 'abc'}],
+    objects: [
+      {
+        bar: 'abc',
+        pia: 123,
+      },
+    ],
   },
   $setOnInsert: {
     foo: 123,
@@ -70,6 +76,7 @@ flattenUpdate<A>({
     },
     objects: atomic({
       bar: 'abc',
+      pia: 123,
     }),
   },
   $pop: {
@@ -90,14 +97,30 @@ flattenUpdate<A>({
   $push: {
     objects: atomic({
       bar: 'abc',
+      pia: 123,
     }),
   },
   $pullAll: {
-    objects: [{bar: 'abc'}],
+    objects: [
+      {
+        bar: 'abc',
+        pia: 123,
+      },
+    ],
   },
   $bit: {
     foo: {
       and: 1,
+    },
+  },
+});
+
+flattenUpdate<A>({
+  $set: {
+    objects: {
+      0: {
+        bar: 'abc',
+      },
     },
   },
 });
@@ -153,7 +176,6 @@ flattenUpdate<A>({
   $setOnInsert: {
     // @ts-expect-error
     foo: '123',
-    // @ts-expect-error
     objects: {
       0: {
         bar: 'abc',
@@ -180,6 +202,7 @@ flattenUpdate<A>({
     objects: {
       // @ts-expect-error
       bar: 'abc',
+      pia: 123,
     },
   },
   $pop: {
@@ -202,11 +225,15 @@ flattenUpdate<A>({
     objects: {
       // @ts-expect-error
       bar: 'abc',
+      pia: 123,
     },
   },
   $pullAll: {
-    // @ts-expect-error
-    objects: {bar: 'abc'},
+    objects: {
+      // @ts-expect-error
+      bar: 'abc',
+      pia: 123,
+    },
   },
   $bit: {
     foo: {

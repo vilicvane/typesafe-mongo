@@ -58,6 +58,8 @@ export interface UpdateSource<T extends object> {
   >;
 }
 
+type PositionOperator = '$' | `$[${string}]` | `${number}`;
+
 type _UpdateSourceValue<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
   [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
     ?
@@ -67,14 +69,15 @@ type _UpdateSourceValue<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
         | (T extends LeafType
             ? never
             : T extends readonly (infer TElement)[]
-            ? {
-                [TPositionOperator in '$' | `$[${string}]`]: _UpdateSourceValue<
+            ? _DistributeKey<
+                PositionOperator,
+                _UpdateSourceValue<
                   TElement,
                   TFieldType,
                   TUpdateOptionsMode,
                   TUpdateOptions
-                >;
-              }
+                >
+              >
             : _UpdateSourceValue<
                 T,
                 TFieldType,
@@ -83,6 +86,12 @@ type _UpdateSourceValue<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
               >)
     : never;
 };
+
+type _DistributeKey<TKeyUnion, TValue> = TKeyUnion extends string
+  ? {
+      [TKey in TKeyUnion]: TValue;
+    }
+  : never;
 
 type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
   TUpdateOptionsMode extends 'static'
