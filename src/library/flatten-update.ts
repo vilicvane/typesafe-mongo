@@ -7,9 +7,9 @@ import type {AtomicType, LeafType} from './@mongo';
 import {isOperatorObject} from './@utils';
 import type {Atomic} from './atomic';
 
-export function flattenUpdate<T extends object>(
-  source: UpdateSource<T>,
-): UpdateFilter<T>;
+export function flattenUpdate<T>(
+  source: T extends object ? UpdateSource<T> : never,
+): T extends object ? UpdateFilter<T> : never;
 export function flattenUpdate(source: object): object {
   const update: Record<string, unknown> = {};
 

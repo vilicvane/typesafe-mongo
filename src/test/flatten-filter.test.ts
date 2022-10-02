@@ -6,7 +6,7 @@ test('simple', () => {
   const id_1 = new ObjectId();
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       foo: {$eq: 'abc'},
       bar: {
         pia: 123,
@@ -18,7 +18,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       bar: {
         pia: {$gt: 0},
       },
@@ -28,7 +28,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       _id: id_1,
       foo: {$eq: 'abc'},
     }),
@@ -38,7 +38,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       bar: {$eq: {pia: 123, hia: true}},
     }),
   ).toEqual({
@@ -46,7 +46,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       bar: atomic({pia: 123, hia: true}),
     }),
   ).toEqual({
@@ -54,7 +54,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       bar: {pia: 123, hia: true},
     }),
   ).toEqual({
@@ -63,7 +63,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter({
+    flattenFilter<object>({
       bar: {pia: {x: 123, y: {$eq: 456}}, hia: true},
     }),
   ).toEqual({

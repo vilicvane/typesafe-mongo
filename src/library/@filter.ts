@@ -9,7 +9,7 @@ import type {
 
 declare const flattenedFilterSymbol: unique symbol;
 
-export type FlattenedFilter<T> = Filter<T> & FlattenedFilterNominalPatch;
+export type _FlattenedFilter<T> = Filter<T> & FlattenedFilterNominalPatch;
 
 declare class FlattenedFilterNominalPatch {
   protected [flattenedFilterSymbol]: 'nominal';
@@ -19,7 +19,7 @@ export type _FilterOperators<T, TBeingElement> =
   FilterOperatorsWithoutElementMatch<T> &
     (TBeingElement extends true
       ? {
-          $elemMatch?: FlattenedFilter<T> | _ElementMatchFilter<T>;
+          $elemMatch?: _FlattenedFilter<T> | _ElementMatchFilter<T>;
         }
       : {});
 
