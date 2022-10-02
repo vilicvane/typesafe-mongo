@@ -27,8 +27,10 @@ interface AwesomeDocument {
   }[];
 }
 
-const doc = await collection.findOne(
-  flattenFilter<AwesomeDocument>({
+declare const collection: Collection<AwesomeDocument>;
+
+await collection.findOne(
+  flattenFilter({
     foo: {
       bar: {
         $eq: 'abc',
@@ -38,18 +40,39 @@ const doc = await collection.findOne(
 );
 
 await collection.updateOne(
-  flattenFilter<AwesomeDocument>({
+  flattenFilter({
     objects: {
       name: 'abc',
     },
   }),
-  flattenUpdate<AwesomeDocument>({
+  flattenUpdate({
     $set: {
       objects: {
         $: {
           value: 123,
         },
       },
+    },
+  }),
+);
+
+await collection.updateOne(
+  flattenFilter({
+    // Using `atomic()` to prevent a plain object from being flattened:
+    objects: atomic({
+      name: 'abc',
+      value: 123,
+    }),
+  }),
+  flattenUpdate({
+    $set: {
+      // Arrays will never be flattened, so in this case no `atomic()` needed.
+      objects: [
+        {
+          name: 'abc',
+          value: 123,
+        },
+      ],
     },
   }),
 );
