@@ -12,6 +12,7 @@
       },
       {
         "name": "test",
+        "noEmit": true,
         "references": ["library"]
       }
     ]

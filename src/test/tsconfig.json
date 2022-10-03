@@ -3,6 +3,7 @@
   "compilerOptions": {
     "composite": true,
     "types": ["jest"],
+    "noEmit": true,
     "outDir": "../../bld/test"
   },
   "references": [
