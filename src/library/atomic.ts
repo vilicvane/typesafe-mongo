@@ -1,11 +1,12 @@
 export const atomicSymbol = Symbol('atomic');
 
 export class Atomic<T> {
-  private [atomicSymbol] = true;
+  declare [atomicSymbol]: true;
 
   constructor(readonly value: T) {}
 }
 
-export function atomic<T>(value: T): Atomic<T> {
+export function atomic<T>(value: T): T extends unknown ? Atomic<T> : never;
+export function atomic(value: unknown): Atomic<unknown> {
   return new Atomic(value);
 }

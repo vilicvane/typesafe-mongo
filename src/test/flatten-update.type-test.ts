@@ -4,10 +4,13 @@ interface A {
   meta?: {
     date: Date;
     time: Date;
-    deep: {
-      value: number;
-      values: number[];
-    };
+    deep:
+      | {
+          value: number;
+        }
+      | {
+          values: number[];
+        };
   };
   foo: number;
   objects: {
@@ -44,6 +47,10 @@ flattenUpdate<A>({
     },
   },
   $set: {
+    meta: {
+      // eslint-disable-next-line @mufan/no-object-literal-type-assertion
+      deep: atomic({value: 123} as {value: number} | {values: number[]}),
+    },
     foo: 123,
     objects: [
       {

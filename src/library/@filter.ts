@@ -12,7 +12,7 @@ declare const flattenedFilterSymbol: unique symbol;
 export type _FlattenedFilter<T> = Filter<T> & FlattenedFilterNominalPatch;
 
 declare class FlattenedFilterNominalPatch {
-  protected [flattenedFilterSymbol]: 'nominal';
+  declare [flattenedFilterSymbol]: true;
 }
 
 export type _FilterOperators<T, TBeingElement> =
