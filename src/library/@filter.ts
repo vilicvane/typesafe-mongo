@@ -14,32 +14,32 @@ declare module 'mongodb' {
   }
 }
 
-export interface _FlattenedFilter<T> {
+export interface FlattenedFilter_<T> {
   [__nominal_filter_of_source]: T;
 }
 
-export type _FilterOperators<T, TBeingElement> =
+export type FilterOperators_<T, TBeingElement> =
   FilterOperatorsWithoutElementMatch<T> &
     (TBeingElement extends true
       ? {
-          $elemMatch?: _FlattenedFilter<T> | _ElementMatchFilter<T>;
+          $elemMatch?: FlattenedFilter_<T> | ElementMatchFilter_<T>;
         }
       : {});
 
-type _ElementMatchFilter<T> = {
+type ElementMatchFilter_<T> = {
   [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
     ?
         | null
-        | _ElementMatchFilterValue<T, false>
+        | ElementMatchFilterValue_<T, false>
         | (T extends readonly (infer TElement)[]
-            ? _ElementMatchFilterValue<TElement, true>
+            ? ElementMatchFilterValue_<TElement, true>
             : never)
     : never;
 };
 
-type _ElementMatchFilterValue<T, TBeingElement> =
+type ElementMatchFilterValue_<T, TBeingElement> =
   | T
-  | _FilterOperators<T, TBeingElement>;
+  | FilterOperators_<T, TBeingElement>;
 
 interface FilterOperatorsWithoutElementMatch<T> {
   $eq?: T;

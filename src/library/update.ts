@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import type {IntegerType, NumericType, Timestamp, UpdateFilter} from 'mongodb';
 
-import type {_FilterOperators, _FlattenedFilter} from './@filter';
+import type {FilterOperators_, FlattenedFilter_} from './@filter';
 import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
 import {isOperatorObject} from './@utils';
@@ -40,22 +40,22 @@ export function update(source: object): object {
 
 export interface UpdateSource<T extends object> {
   $currentDate?:
-    | _UpdateSourceValue<T, Date, 'static', true | {$type: 'date'}>
-    | _UpdateSourceValue<T, Timestamp, 'static', {$type: 'timestamp'}>;
-  $inc?: _UpdateSourceValue<T, NumericType, 'static', NumericType>;
-  $min?: _UpdateSourceValue<T, unknown, 'value', unknown>;
-  $max?: _UpdateSourceValue<T, unknown, 'value', unknown>;
-  $mul?: _UpdateSourceValue<T, NumericType, 'static', NumericType>;
+    | UpdateSourceValue_<T, Date, 'static', true | {$type: 'date'}>
+    | UpdateSourceValue_<T, Timestamp, 'static', {$type: 'timestamp'}>;
+  $inc?: UpdateSourceValue_<T, NumericType, 'static', NumericType>;
+  $min?: UpdateSourceValue_<T, unknown, 'value', unknown>;
+  $max?: UpdateSourceValue_<T, unknown, 'value', unknown>;
+  $mul?: UpdateSourceValue_<T, NumericType, 'static', NumericType>;
   $rename?: Record<string, string>;
-  $set?: _UpdateSourceValue<T, unknown, 'value', unknown>;
-  $setOnInsert?: _UpdateSourceValue<T, unknown, 'value', unknown>;
-  $unset?: _UpdateSourceValue<T, unknown, 'static', '' | true | 1>;
-  $addToSet?: _UpdateSourceValue<T, readonly unknown[], 'element', unknown>;
-  $pop?: _UpdateSourceValue<T, readonly unknown[], 'static', 1 | -1>;
-  $pull?: _UpdateSourceValue<T, readonly unknown[], 'element-match', unknown>;
-  $push?: _UpdateSourceValue<T, readonly unknown[], 'element', unknown>;
-  $pullAll?: _UpdateSourceValue<T, readonly unknown[], 'value', unknown>;
-  $bit?: _UpdateSourceValue<
+  $set?: UpdateSourceValue_<T, unknown, 'value', unknown>;
+  $setOnInsert?: UpdateSourceValue_<T, unknown, 'value', unknown>;
+  $unset?: UpdateSourceValue_<T, unknown, 'static', '' | true | 1>;
+  $addToSet?: UpdateSourceValue_<T, readonly unknown[], 'element', unknown>;
+  $pop?: UpdateSourceValue_<T, readonly unknown[], 'static', 1 | -1>;
+  $pull?: UpdateSourceValue_<T, readonly unknown[], 'element-match', unknown>;
+  $push?: UpdateSourceValue_<T, readonly unknown[], 'element', unknown>;
+  $pullAll?: UpdateSourceValue_<T, readonly unknown[], 'value', unknown>;
+  $bit?: UpdateSourceValue_<
     T,
     NumericType,
     'static',
@@ -65,25 +65,25 @@ export interface UpdateSource<T extends object> {
 
 type PositionOperator = '$' | `$[${string}]` | `${number}`;
 
-type _UpdateSourceValue<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
+type UpdateSourceValue_<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
   [TKey in keyof T]?: NonNullable<T[TKey]> extends infer T
     ?
         | (T extends TFieldType
-            ? _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T>
+            ? UpdateOptions_<TUpdateOptionsMode, TUpdateOptions, T>
             : never)
         | (T extends LeafType
             ? never
             : T extends readonly (infer TElement)[]
-            ? _DistributeKey<
+            ? DistributeKey_<
                 PositionOperator,
-                _UpdateSourceValue<
+                UpdateSourceValue_<
                   TElement,
                   TFieldType,
                   TUpdateOptionsMode,
                   TUpdateOptions
                 >
               >
-            : _UpdateSourceValue<
+            : UpdateSourceValue_<
                 T,
                 TFieldType,
                 TUpdateOptionsMode,
@@ -92,13 +92,13 @@ type _UpdateSourceValue<T, TFieldType, TUpdateOptionsMode, TUpdateOptions> = {
     : never;
 };
 
-type _DistributeKey<TKeyUnion, TValue> = TKeyUnion extends string
+type DistributeKey_<TKeyUnion, TValue> = TKeyUnion extends string
   ? {
       [TKey in TKeyUnion]: TValue;
     }
   : never;
 
-type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
+type UpdateOptions_<TUpdateOptionsMode, TUpdateOptions, T> =
   TUpdateOptionsMode extends 'static'
     ? TUpdateOptions
     : TUpdateOptionsMode extends 'value'
@@ -115,8 +115,8 @@ type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
     ? T extends readonly (infer TElement)[]
       ?
           | (TElement extends AtomicType ? TElement : Atomic<Partial<TElement>>)
-          | _FilterOperators<TElement, false>
-          | _FlattenedFilter<TElement>
+          | FilterOperators_<TElement, false>
+          | FlattenedFilter_<TElement>
       : never
     : never;
 
