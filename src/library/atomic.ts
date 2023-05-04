@@ -1,7 +1,7 @@
-export const atomicSymbol = Symbol('atomic');
+declare const __nominal_atomic: unique symbol;
 
 export class Atomic<T> {
-  declare [atomicSymbol]: true;
+  declare [__nominal_atomic]: T;
 
   constructor(readonly value: T) {}
 }
