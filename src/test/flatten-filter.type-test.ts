@@ -1,6 +1,6 @@
 import {ObjectId} from 'mongodb';
 
-import {atomic, flattenFilter} from '../library';
+import {atomic, filter} from '../library';
 
 interface A {
   _id: ObjectId;
@@ -11,21 +11,21 @@ interface A {
   };
 }
 
-flattenFilter<A>({_id: new ObjectId(), foo: {$eq: 'abc'}});
+filter<A>({_id: new ObjectId(), foo: {$eq: 'abc'}});
 // @ts-expect-error
-flattenFilter<A>({foo: {$eq: 123}});
-flattenFilter<A>({bar: {$eq: {pia: 123, hia: true}}});
-flattenFilter<A>({bar: {pia: 123}});
-flattenFilter<A>({bar: {pia: {$eq: 123}}});
+filter<A>({foo: {$eq: 123}});
+filter<A>({bar: {$eq: {pia: 123, hia: true}}});
+filter<A>({bar: {pia: 123}});
+filter<A>({bar: {pia: {$eq: 123}}});
 // @ts-expect-error
-flattenFilter<A>({bar: {pia: {$eq: 'abc'}}});
-flattenFilter<A>({bar: atomic({pia: 123, hia: true})});
+filter<A>({bar: {pia: {$eq: 'abc'}}});
+filter<A>({bar: atomic({pia: 123, hia: true})});
 // @ts-expect-error
-flattenFilter<A>({bar: atomic({pia: 123})});
+filter<A>({bar: atomic({pia: 123})});
 // @ts-expect-error
-flattenFilter<A>({bar: {pia: 'abc'}});
+filter<A>({bar: {pia: 'abc'}});
 // @ts-expect-error
-flattenFilter<A>({bar: atomic({pia: 'abc'})});
+filter<A>({bar: atomic({pia: 'abc'})});
 
 interface B {
   foo: string;
@@ -39,25 +39,25 @@ interface B {
   }[];
 }
 
-flattenFilter<B>({texts: {$eq: 'abc'}});
-flattenFilter<B>({texts: 'abc'});
-flattenFilter<B>({objects: {$elemMatch: {bar: 123}}});
-flattenFilter<B>({objects: {$elemMatch: {pia: {x: 'abc', y: 'def'}}}});
-flattenFilter<B>({
+filter<B>({texts: {$eq: 'abc'}});
+filter<B>({texts: 'abc'});
+filter<B>({objects: {$elemMatch: {bar: 123}}});
+filter<B>({objects: {$elemMatch: {pia: {x: 'abc', y: 'def'}}}});
+filter<B>({
   objects: {
-    $elemMatch: flattenFilter<B['objects'][number]>({
+    $elemMatch: filter<B['objects'][number]>({
       pia: {x: 'abc', y: 'def'},
     }),
   },
 });
-flattenFilter<B>({
+filter<B>({
   objects: {
     $elemMatch: {
       pia: {x: 'abc', y: 'def'},
     },
   },
 });
-flattenFilter<B>({
+filter<B>({
   objects: {
     0: {
       bar: 123,

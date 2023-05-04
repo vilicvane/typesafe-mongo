@@ -1,12 +1,12 @@
 import {ObjectId} from 'mongodb';
 
-import {atomic, flattenFilter} from '../library';
+import {atomic, filter} from '../library';
 
 test('simple', () => {
   const id_1 = new ObjectId();
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       foo: {$eq: 'abc'},
       bar: {
         pia: 123,
@@ -18,7 +18,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       bar: {
         pia: {$gt: 0},
       },
@@ -28,7 +28,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       _id: id_1,
       foo: {$eq: 'abc'},
     }),
@@ -38,7 +38,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       bar: {$eq: {pia: 123, hia: true}},
     }),
   ).toEqual({
@@ -46,7 +46,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       bar: atomic({pia: 123, hia: true}),
     }),
   ).toEqual({
@@ -54,7 +54,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       bar: {pia: 123, hia: true},
     }),
   ).toEqual({
@@ -63,7 +63,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenFilter<object>({
+    filter<object>({
       bar: {pia: {x: 123, y: {$eq: 456}}, hia: true},
     }),
   ).toEqual({

@@ -1,4 +1,4 @@
-import {atomic, flattenFilter, flattenUpdate} from '../library';
+import {atomic, filter, update} from '../library';
 
 interface A {
   meta?: {
@@ -19,7 +19,7 @@ interface A {
   }[];
 }
 
-flattenUpdate<A>({
+update<A>({
   $currentDate: {
     meta: {
       date: true,
@@ -122,7 +122,7 @@ flattenUpdate<A>({
   },
 });
 
-flattenUpdate<A>({
+update<A>({
   $set: {
     objects: {
       0: {
@@ -132,15 +132,15 @@ flattenUpdate<A>({
   },
 });
 
-flattenUpdate<A>({
+update<A>({
   $pull: {
-    objects: flattenFilter({
+    objects: filter({
       bar: 'abc',
     }),
   },
 });
 
-flattenUpdate<A>({
+update<A>({
   $currentDate: {
     meta: {
       // @ts-expect-error
@@ -151,16 +151,16 @@ flattenUpdate<A>({
   },
 });
 
-flattenUpdate<A>({
+update<A>({
   $pull: {
-    objects: flattenFilter({
+    objects: filter({
       // @ts-expect-error
       baz: 'abc',
     }),
   },
 });
 
-flattenUpdate<A>({
+update<A>({
   $currentDate: {
     meta: {
       // @ts-expect-error

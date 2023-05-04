@@ -7,10 +7,15 @@ import type {AtomicType, LeafType} from './@mongo';
 import {isOperatorObject} from './@utils';
 import type {Atomic} from './atomic';
 
-export function flattenUpdate<T extends object>(
+/**
+ * @deprecated Use {@link update} instead.
+ */
+export const flattenUpdate = update;
+
+export function update<T extends object>(
   source: T extends object ? UpdateSource<T> : never,
 ): UpdateFilter<T>;
-export function flattenUpdate(source: object): object {
+export function update(source: object): object {
   const update: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(source)) {

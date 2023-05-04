@@ -1,3 +1,3 @@
 export * from './atomic';
-export * from './flatten-filter';
-export * from './flatten-update';
+export * from './filter';
+export * from './update';

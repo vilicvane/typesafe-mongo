@@ -1,8 +1,8 @@
-import {atomic, flattenFilter, flattenUpdate} from '../library';
+import {atomic, filter, update} from '../library';
 
 test('simple', () => {
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $currentDate: {
         meta: {
           date: true,
@@ -16,7 +16,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $currentDate: {
         meta: {
           date: {
@@ -34,7 +34,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $inc: {
         foo: 1,
       },
@@ -46,7 +46,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $min: {
         foo: 2,
       },
@@ -58,7 +58,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $max: {
         objects: {
           $: {
@@ -74,7 +74,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $mul: {
         meta: {
           deep: {
@@ -90,7 +90,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $set: {
         foo: 123,
         objects: [{bar: 'abc'}],
@@ -104,7 +104,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $setOnInsert: {
         foo: 123,
         objects: {
@@ -122,7 +122,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $unset: {
         foo: true,
         objects: {
@@ -140,7 +140,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $addToSet: {
         meta: {
           deep: {
@@ -162,7 +162,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $pop: {
         objects: 1,
       },
@@ -174,7 +174,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $pull: {
         meta: {
           deep: {
@@ -194,9 +194,9 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $pull: {
-        meta: flattenFilter({
+        meta: filter({
           deep: {
             values: {
               $eq: 123,
@@ -216,7 +216,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $push: {
         objects: atomic({
           bar: 'abc',
@@ -232,7 +232,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $pullAll: {
         objects: [{bar: 'abc'}],
       },
@@ -244,7 +244,7 @@ test('simple', () => {
   });
 
   expect(
-    flattenUpdate<object>({
+    update<object>({
       $bit: {
         deep: {
           value: {

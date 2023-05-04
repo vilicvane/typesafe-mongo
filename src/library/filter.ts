@@ -6,10 +6,15 @@ import type {Atomic} from './atomic';
 
 export type FilterSource<T extends object> = _FilterSource<T>;
 
-export function flattenFilter<T extends object>(
+/**
+ * @deprecated Use {@link filter} instead.
+ */
+export const flattenFilter = filter;
+
+export function filter<T extends object>(
   source: T extends object ? FilterSource<T> : never,
 ): _FlattenedFilter<T>;
-export function flattenFilter(source: object): object {
+export function filter(source: object): object {
   return flattenObject(source, isOperatorObject, true);
 }
 
