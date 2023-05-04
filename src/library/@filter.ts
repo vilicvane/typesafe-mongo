@@ -4,15 +4,18 @@ import type {
   BSONTypeAlias,
   BitwiseFilter,
   Document,
-  Filter,
 } from 'mongodb';
 
-declare const flattenedFilterSymbol: unique symbol;
+declare const __nominal_filter_of_source: unique symbol;
 
-export type _FlattenedFilter<T> = Filter<T> & FlattenedFilterNominalPatch;
+declare module 'mongodb' {
+  interface RootFilterOperators<TSchema> {
+    [__nominal_filter_of_source]: TSchema;
+  }
+}
 
-declare class FlattenedFilterNominalPatch {
-  declare [flattenedFilterSymbol]: true;
+export interface _FlattenedFilter<T> {
+  [__nominal_filter_of_source]: T;
 }
 
 export type _FilterOperators<T, TBeingElement> =

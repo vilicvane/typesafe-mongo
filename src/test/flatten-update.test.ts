@@ -1,4 +1,4 @@
-import {atomic, flattenUpdate} from '../library';
+import {atomic, flattenFilter, flattenUpdate} from '../library';
 
 test('simple', () => {
   expect(
@@ -189,6 +189,28 @@ test('simple', () => {
     $pull: {
       'meta.deep.values': {
         $eq: 123,
+      },
+    },
+  });
+
+  expect(
+    flattenUpdate<object>({
+      $pull: {
+        meta: flattenFilter({
+          deep: {
+            values: {
+              $eq: 123,
+            },
+          },
+        }),
+      },
+    }),
+  ).toEqual({
+    $pull: {
+      meta: {
+        'deep.values': {
+          $eq: 123,
+        },
       },
     },
   });

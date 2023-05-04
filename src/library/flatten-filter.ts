@@ -10,7 +10,7 @@ export function flattenFilter<T extends object>(
   source: T extends object ? FilterSource<T> : never,
 ): _FlattenedFilter<T>;
 export function flattenFilter(source: object): object {
-  return flattenObject(source, isOperatorObject);
+  return flattenObject(source, isOperatorObject, true);
 }
 
 type _FilterSource<T> =

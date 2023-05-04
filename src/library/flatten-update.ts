@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import type {IntegerType, NumericType, Timestamp, UpdateFilter} from 'mongodb';
 
-import type {_FilterOperators} from './@filter';
+import type {_FilterOperators, _FlattenedFilter} from './@filter';
 import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
 import {isOperatorObject} from './@utils';
@@ -16,16 +16,16 @@ export function flattenUpdate(source: object): object {
   for (const [key, value] of Object.entries(source)) {
     switch (key) {
       case '$currentDate':
-        update[key] = flattenObject(value, isCurrentDateOptionsObject);
+        update[key] = flattenObject(value, isCurrentDateOptionsObject, false);
         break;
       case '$pull':
-        update[key] = flattenObject(value, isOperatorObject);
+        update[key] = flattenObject(value, isOperatorObject, false);
         break;
       case '$bit':
-        update[key] = flattenObject(value, isBitOptionsObject);
+        update[key] = flattenObject(value, isBitOptionsObject, false);
         break;
       default:
-        update[key] = flattenObject(value, isNeverOptionsObject);
+        update[key] = flattenObject(value, isNeverOptionsObject, false);
         break;
     }
   }
@@ -111,6 +111,7 @@ type _UpdateOptions<TUpdateOptionsMode, TUpdateOptions, T> =
       ?
           | (TElement extends AtomicType ? TElement : Atomic<Partial<TElement>>)
           | _FilterOperators<TElement, false>
+          | _FlattenedFilter<TElement>
       : never
     : never;
 
