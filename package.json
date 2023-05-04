@@ -1,6 +1,6 @@
 {
   "name": "typesafe-mongo",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "TypeSafe utilities for official MongoDB Node.js driver.",
   "repository": "https://github.com/vilic/typesafe-mongo.git",
   "license": "MIT",
