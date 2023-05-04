@@ -1,3 +1,5 @@
+import type {Collection} from 'mongodb';
+
 import {atomic, filter, update} from '../library';
 
 interface A {
@@ -18,6 +20,32 @@ interface A {
     pia: number;
   }[];
 }
+
+declare const collectionA: Collection<A>;
+
+void collectionA.updateOne(
+  {},
+  update({
+    $inc: {
+      foo: 1,
+    },
+    $pull: {
+      objects: filter({
+        bar: 'abc',
+      }),
+    },
+  }),
+);
+
+void collectionA.updateOne(
+  {},
+  update({
+    $inc: {
+      // @ts-expect-error
+      bar: 1,
+    },
+  }),
+);
 
 update<A>({
   $currentDate: {

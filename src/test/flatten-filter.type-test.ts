@@ -1,3 +1,4 @@
+import type {Collection} from 'mongodb';
 import {ObjectId} from 'mongodb';
 
 import {atomic, filter} from '../library';
@@ -10,6 +11,12 @@ interface A {
     hia: boolean;
   };
 }
+
+declare const collectionA: Collection<A>;
+
+collectionA.find(filter({_id: new ObjectId(), foo: {$eq: 'abc'}}));
+// @ts-expect-error
+collectionA.find(filter({foo: {$eq: 123}}));
 
 filter<A>({_id: new ObjectId(), foo: {$eq: 'abc'}});
 // @ts-expect-error
@@ -38,6 +45,10 @@ interface B {
     }[];
   }[];
 }
+
+declare const collectionB: Collection<B>;
+
+collectionB.find(filter({texts: {$eq: 'abc'}}));
 
 filter<B>({texts: {$eq: 'abc'}});
 filter<B>({texts: 'abc'});
