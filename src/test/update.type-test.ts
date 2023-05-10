@@ -1,6 +1,6 @@
 import type {Collection} from 'mongodb';
 
-import {atomic, filter, update} from '../library';
+import {atomic, filter, sort, update} from '../library';
 
 interface A {
   meta?: {
@@ -18,6 +18,11 @@ interface A {
   objects: {
     bar: string;
     pia: number;
+  }[];
+  items: {
+    object: {
+      bar: string;
+    };
   }[];
 }
 
@@ -171,6 +176,12 @@ update<A>({
       ],
       $slice: 1,
     },
+    items: {
+      $each: [],
+      $sort: sort({
+        object: 1,
+      }),
+    },
   },
   $addToSet: {
     objects: {
@@ -180,6 +191,30 @@ update<A>({
           bar: 'abc',
         },
       ],
+    },
+  },
+});
+
+update<A>({
+  $push: {
+    items: {
+      $each: [],
+      $sort: sort({
+        // @ts-expect-error
+        object: 2,
+      }),
+    },
+  },
+});
+
+update<A>({
+  $push: {
+    items: {
+      $each: [],
+      $sort: {
+        // @ts-expect-error
+        object: 1,
+      },
     },
   },
 });

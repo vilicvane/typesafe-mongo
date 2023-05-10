@@ -7,11 +7,11 @@ import type {
   WithId,
 } from 'mongodb';
 
-declare const __nominal_filter_of_source: unique symbol;
+declare const __nominal_filter_source: unique symbol;
 
 declare module 'mongodb' {
   interface RootFilterOperators<TSchema> {
-    [__nominal_filter_of_source]?: TSchema;
+    [__nominal_filter_source]?: TSchema;
   }
 }
 
@@ -19,7 +19,7 @@ export interface FlattenedFilter_<T> {
   /**
    * Matches `Filter<T>`, which extends `RootFilterOperators<WithId<T>>`.
    */
-  [__nominal_filter_of_source]?: WithId<T>;
+  [__nominal_filter_source]?: WithId<T>;
 }
 
 export type FilterOperators_<T, TBeingElement> =

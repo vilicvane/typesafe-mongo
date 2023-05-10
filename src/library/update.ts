@@ -6,6 +6,8 @@ import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
 import {isOperatorOrModifierObject} from './@utils';
 import type {Atomic} from './atomic';
+import type {Flattened} from './flatten';
+import type {SortLeaf} from './flatten-utils';
 
 /**
  * @deprecated Use {@link update} instead.
@@ -114,7 +116,9 @@ type UpdateOptions_<TUpdateOptionsMode, TUpdateOptions, T> =
           | {
               $each: TElement[];
               $slice?: number;
-              $sort?: object;
+              $sort?: TElement extends object
+                ? Flattened<TElement, SortLeaf>
+                : object;
               $position?: number;
             }
       : never
