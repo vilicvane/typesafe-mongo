@@ -1,7 +1,7 @@
 import type {FilterOperators_, FlattenedFilter_} from './@filter';
 import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
-import {isOperatorObject} from './@utils';
+import {isOperatorOrModifierObject} from './@utils';
 import type {Atomic} from './atomic';
 
 export type FilterSource<T extends object> = FilterSource_<T>;
@@ -15,7 +15,7 @@ export function filter<T extends object>(
   source: T extends object ? FilterSource<T> : never,
 ): FlattenedFilter_<T>;
 export function filter(source: object): object {
-  return flattenObject(source, isOperatorObject, true);
+  return flattenObject(source, isOperatorOrModifierObject, true);
 }
 
 type FilterSource_<T> =

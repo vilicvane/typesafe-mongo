@@ -233,6 +233,26 @@ test('simple', () => {
 
   expect(
     update<object>({
+      $push: {
+        objects: {
+          $each: {
+            bar: 'abc',
+          },
+        },
+      },
+    }),
+  ).toEqual({
+    $push: {
+      objects: {
+        $each: {
+          bar: 'abc',
+        },
+      },
+    },
+  });
+
+  expect(
+    update<object>({
       $pullAll: {
         objects: [{bar: 'abc'}],
       },

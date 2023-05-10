@@ -161,6 +161,30 @@ update<A>({
 });
 
 update<A>({
+  $push: {
+    objects: {
+      $each: [
+        {
+          bar: 'abc',
+          pia: 123,
+        },
+      ],
+      $slice: 1,
+    },
+  },
+  $addToSet: {
+    objects: {
+      $each: [
+        // @ts-expect-error
+        {
+          bar: 'abc',
+        },
+      ],
+    },
+  },
+});
+
+update<A>({
   $pull: {
     objects: filter({
       bar: 'abc',

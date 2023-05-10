@@ -4,7 +4,7 @@ import type {IntegerType, NumericType, Timestamp, UpdateFilter} from 'mongodb';
 import type {FilterOperators_, FlattenedFilter_} from './@filter';
 import {flattenObject} from './@flatten-object';
 import type {AtomicType, LeafType} from './@mongo';
-import {isOperatorObject} from './@utils';
+import {isOperatorOrModifierObject} from './@utils';
 import type {Atomic} from './atomic';
 
 /**
@@ -23,8 +23,10 @@ export function update(source: object): object {
       case '$currentDate':
         update[key] = flattenObject(value, isCurrentDateOptionsObject, false);
         break;
+      case '$addToSet':
+      case '$push':
       case '$pull':
-        update[key] = flattenObject(value, isOperatorObject, false);
+        update[key] = flattenObject(value, isOperatorOrModifierObject, false);
         break;
       case '$bit':
         update[key] = flattenObject(value, isBitOptionsObject, false);
@@ -50,10 +52,10 @@ export interface UpdateSource<T extends object> {
   $set?: UpdateSourceValue_<T, unknown, 'value', unknown>;
   $setOnInsert?: UpdateSourceValue_<T, unknown, 'value', unknown>;
   $unset?: UpdateSourceValue_<T, unknown, 'static', '' | true | 1>;
-  $addToSet?: UpdateSourceValue_<T, readonly unknown[], 'element', unknown>;
+  $addToSet?: UpdateSourceValue_<T, readonly unknown[], 'add-to-set', unknown>;
   $pop?: UpdateSourceValue_<T, readonly unknown[], 'static', 1 | -1>;
   $pull?: UpdateSourceValue_<T, readonly unknown[], 'element-match', unknown>;
-  $push?: UpdateSourceValue_<T, readonly unknown[], 'element', unknown>;
+  $push?: UpdateSourceValue_<T, readonly unknown[], 'push', unknown>;
   $pullAll?: UpdateSourceValue_<T, readonly unknown[], 'value', unknown>;
   $bit?: UpdateSourceValue_<
     T,
@@ -105,11 +107,22 @@ type UpdateOptions_<TUpdateOptionsMode, TUpdateOptions, T> =
     ? T extends AtomicType
       ? T
       : Atomic<T>
-    : TUpdateOptionsMode extends 'element'
+    : TUpdateOptionsMode extends 'push'
     ? T extends readonly (infer TElement)[]
-      ? TElement extends AtomicType
-        ? TElement
-        : Atomic<TElement>
+      ?
+          | (TElement extends AtomicType ? TElement : Atomic<TElement>)
+          | {
+              $each: TElement[];
+              $slice?: number;
+              $sort?: object;
+              $position?: number;
+            }
+      : never
+    : TUpdateOptionsMode extends 'add-to-set'
+    ? T extends readonly (infer TElement)[]
+      ?
+          | (TElement extends AtomicType ? TElement : Atomic<TElement>)
+          | {$each: TElement[]}
       : never
     : TUpdateOptionsMode extends 'element-match'
     ? T extends readonly (infer TElement)[]
