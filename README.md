@@ -14,8 +14,10 @@ npm install typesafe-mongo
 
 ## Usage
 
+### Filter and Update
+
 ```ts
-import {flattenFilter} from 'typesafe-mongo';
+import {filter, update} from 'typesafe-mongo';
 
 interface AwesomeDocument {
   foo: {
@@ -30,7 +32,7 @@ interface AwesomeDocument {
 declare const collection: Collection<AwesomeDocument>;
 
 await collection.findOne(
-  flattenFilter({
+  filter({
     foo: {
       bar: {
         $eq: 'abc',
@@ -40,12 +42,12 @@ await collection.findOne(
 );
 
 await collection.updateOne(
-  flattenFilter({
+  filter({
     objects: {
       name: 'abc',
     },
   }),
-  flattenUpdate({
+  update({
     $set: {
       objects: {
         $: {
@@ -57,14 +59,14 @@ await collection.updateOne(
 );
 
 await collection.updateOne(
-  flattenFilter({
+  filter({
     // Using `atomic()` to prevent a plain object from being flattened:
     objects: atomic({
       name: 'abc',
       value: 123,
     }),
   }),
-  flattenUpdate({
+  update({
     $set: {
       // Arrays will never be flattened, so in this case no `atomic()` needed.
       objects: [
@@ -76,6 +78,43 @@ await collection.updateOne(
     },
   }),
 );
+```
+
+### Flatten Utilities
+
+```ts
+import {flatten, sort, project} from 'typesafe-mongo';
+
+interface AwesomeDocument {
+  foo: {
+    bar: string;
+  };
+  objects: {
+    name: string;
+    value: number;
+  }[];
+}
+
+flatten<AwesomeDocument, 'asc' | 'desc'>({
+  foo: {
+    bar: 'asc',
+  },
+  objects: {
+    name: 'desc',
+  },
+});
+
+sort<AwesomeDocument>({
+  foo: {
+    bar: 1,
+  },
+});
+
+project<AwesomeDocument>({
+  objects: {
+    name: true,
+  },
+});
 ```
 
 ## License

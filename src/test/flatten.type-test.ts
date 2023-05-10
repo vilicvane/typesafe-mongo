@@ -10,12 +10,19 @@ interface A {
     pia: number;
     hia: boolean;
   };
+  items?: {
+    key: string;
+    value: number;
+  }[];
 }
 
 flatten<A, number>({
   foo: 1,
   bar: {
     pia: -1,
+  },
+  items: {
+    key: 1,
   },
 });
 
