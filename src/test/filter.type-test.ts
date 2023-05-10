@@ -10,6 +10,7 @@ interface A {
     pia: number;
     hia: boolean;
   };
+  data: {type: 'a'} | {type: 'b'};
 }
 
 declare const collectionA: Collection<A>;
@@ -33,6 +34,11 @@ filter<A>({bar: atomic({pia: 123})});
 filter<A>({bar: {pia: 'abc'}});
 // @ts-expect-error
 filter<A>({bar: atomic({pia: 'abc'})});
+filter<A>({data: {type: 'a'}});
+// https://github.com/microsoft/TypeScript/issues/54147
+// filter<A>({data: {type: undefined! as 'a' | 'b'}});
+// @ts-expect-error
+filter<A>({data: {type: 'c'}});
 
 interface B {
   foo: string;
