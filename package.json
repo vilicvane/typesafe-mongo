@@ -7,7 +7,8 @@
   "author": "vilicvane",
   "exports": {
     "types": "./bld/library/index.d.ts",
-    "require": "./bld/library/index.js"
+    "require": "./bld/library/index.js",
+    "default": "./bld/library/index.js"
   },
   "scripts": {
     "build": "rimraf --glob ./{.bld,bld} && tsc --build",
@@ -25,13 +26,13 @@
   },
   "devDependencies": {
     "@mufan/code": "^0.2.16",
-    "@mufan/eslint-plugin": "^0.1.77",
+    "@mufan/eslint-plugin": "^0.1.78",
     "@types/jest": "^29.5.1",
-    "eslint": "^8.39.0",
+    "eslint": "^8.40.0",
     "jest": "^29.5.0",
     "mongodb": "^5.3.0",
     "prettier": "^2.8.8",
-    "rimraf": "^4.4.1",
+    "rimraf": "^5.0.0",
     "run-in-every": "^0.2.0",
     "ts-jest": "^29.1.0",
     "tslang": "^0.1.27",
