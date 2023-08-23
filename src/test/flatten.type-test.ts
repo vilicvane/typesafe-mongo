@@ -1,4 +1,4 @@
-import type {ObjectId} from 'mongodb';
+import type {ObjectId, Sort} from 'mongodb';
 
 import type {Flattened, ProjectLeaf, SortLeaf} from '../library';
 import {flatten, project, sort} from '../library';
@@ -91,6 +91,15 @@ test<Flattened<A, number>>(
 
 test<Flattened<A, SortLeaf>>(
   sort({
+    foo: 1,
+    bar: {
+      pia: -1,
+    },
+  }),
+);
+
+test<Sort>(
+  sort<A>({
     foo: 1,
     bar: {
       pia: -1,

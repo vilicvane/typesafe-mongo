@@ -8,7 +8,8 @@ export type FlattenSource<
 
 export function flatten<T extends object, TLeaf extends LeafType>(
   source: T extends object ? FlattenSource<T, TLeaf> : never,
-): Flattened<T, TLeaf> {
+): FlattenedResult<T, TLeaf>;
+export function flatten(source: object): object {
   return flattenObject(source, () => false, true);
 }
 
@@ -44,4 +45,9 @@ declare const __nominal_flattened_leaf: unique symbol;
 export interface Flattened<T extends object, TLeaf> {
   [__nominal_flattened_source]?: T;
   [__nominal_flattened_leaf]?: TLeaf;
+}
+
+export interface FlattenedResult<T extends object, TLeaf>
+  extends Flattened<T, TLeaf> {
+  [key: string]: TLeaf;
 }
